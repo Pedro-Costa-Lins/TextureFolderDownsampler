@@ -8,7 +8,7 @@ exports textures from 1K up.
 first draft:
   - Run downsampler.py on Python Terminal
   - Feed the folder/dir path with the textures to downsample
-  - Choose a factor _f_(how many times to cut it in half)
+  - Choose a factor _f_ (how many times to cut it in half)
   - The script will create a copy of the folder with the new downsampled textures.
   - The copy will have the name extended with "_downsampled_by_{ _f_ }x.{ _extension_ }"
 
