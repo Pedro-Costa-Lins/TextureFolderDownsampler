@@ -33,7 +33,7 @@ As per the OpenCV2 doc(see: imread() [1/2]): [https://docs.opencv.org/4.x/d4/da8
   - The script will create a copy of the folder with the new downsampled textures.
   - The copy will have the name extended with "_downsampled_by_{ _f_ }x.{ _extension_ }"
 
-OBS: This will also affect the thumbnail image found in many texture folders
+WARNING: This will affect every image in the folder including the thumbnail found in many texture folders.
 
 ## TO-DO:
   - Make it simpler to use (.exe?)
