@@ -16,4 +16,4 @@ OBS: This will also affect the thumbnail image found in many texture folders
 
 TO-DO:
   - Make it simpler to use (.exe?)
-  - 
+  - More TO-DO?
