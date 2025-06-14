@@ -21,6 +21,7 @@ Should support the following image file types:
 - OpenEXR Image files - *.exr (see the Note section)
 - Radiance HDR - *.hdr, *.pic (always supported)
 - Raster and Vector geospatial data supported by GDAL (see the Note section)
+
 As per the OpenCV2 doc(see: imread() [1/2]): [https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html](https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html)
 
 ## HOW TO:
