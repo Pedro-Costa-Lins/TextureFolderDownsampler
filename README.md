@@ -6,6 +6,8 @@ exports textures from 1K up.
 
 Uses "os" and "cv2" libraries
 
+## Image Support
+
 Should support the following image file types:
 - Windows bitmaps - *.bmp, *.dib (always supported)
 - GIF files - *.gif (always supported)
