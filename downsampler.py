@@ -2,7 +2,7 @@ import os
 import cv2
 
 
-def get_directory() -> list or int:
+def _get_directory() -> list or int:
     """
     Gets the path, corrects bar for windows path and verify dir exists.:
     :return List if found or -1 if not.:
@@ -10,7 +10,7 @@ def get_directory() -> list or int:
 
     while True:
         try:
-            path = input("Enter the directory path: ").replace('\\', '/')
+            path = input(r"Enter the directory path: ").replace('\\', '/')
             if path == -1:
                 return -1
             assert os.path.isdir(path)
@@ -22,16 +22,27 @@ def get_directory() -> list or int:
             return path
 
 
-def get_list_of_texture_paths(dir_name) -> list:
+def _get_list_of_texture_paths(dir_name) -> list:
     """
-    Creates a list of the path names from all textures in the directory
+    Creates a list of the path names from all valid textures in the directory
     :param dir_name:
     :return list:
     """
-    return [f'{dir_name}/{i}' for i in os.listdir(dir_name)]
+
+    list_of_texture_paths = []
+    list_of_texture_names = []
+    for file_name in os.listdir(dir_name):
+
+        file_path = f'{dir_name}/{file_name}'
+        if cv2.haveImageReader(file_path) and cv2.haveImageWriter(file_path):
+            print(f'New file: {file_name} \nFound in: {file_path}\n')
+            list_of_texture_paths.append(file_path)
+            list_of_texture_names.append(file_name)
+
+    return list_of_texture_paths, list_of_texture_names
 
 
-def load_textures(path_list) -> list or int:
+def _load_textures(path_list) -> list or int:
     """
     Loads textures in a list from a list of paths.
     :param path_list:
@@ -44,11 +55,10 @@ def load_textures(path_list) -> list or int:
         if texture is not None:
             texture_list.append(texture)
 
-
     return texture_list if len(texture_list) > 0 else -1
 
 
-def make_new_dir(dir_name, intensity) -> bool or str:
+def _make_new_dir(dir_name, intensity) -> bool or str:
     new_dir_name = f'{dir_name}_downsampled_by_{intensity}X'
     try:
         os.makedirs(new_dir_name)
@@ -58,8 +68,7 @@ def make_new_dir(dir_name, intensity) -> bool or str:
         return new_dir_name
 
 
-
-def get_downsample_factor() -> int:
+def _get_downsample_factor() -> int:
     """
     Get from user the factor for the downsampling
     :return int specifying the downsampling intensity, or -1 if not:
@@ -79,36 +88,38 @@ def get_downsample_factor() -> int:
             return factor
 
 
-def downsample_textures(texture_list, intensity_value) -> list:
+def _downsample_textures(texture_list, intensity_value) -> list:
     """
     Downsamples textures according to the given intensity value.
     :param texture_list:
     :param intensity_value:
     :return list of downsampled textures:
     """
-    downsampled_textures = []
+    textures_to_pyrdown_list = []
+
     for texture in texture_list:
         for _ in range(intensity_value):
             texture = cv2.pyrDown(src=texture)
-        downsampled_textures.append(texture)
+        textures_to_pyrdown_list.append(texture)
 
-    return downsampled_textures
+    return textures_to_pyrdown_list
 
 
-def save_new_downsampled_textures(textures, factor, old_dir, path_to_save) -> None:
+def _save_new_down_sampled_textures(textures, factor, path_to_save, names_list) -> None:
     """
-    Saves downsampled textures and names them according to factor and name from old dir.
+    Saves new down sampled textures.
     :param textures:
     :param factor:
-    :param old_dir:
     :param path_to_save:
+    :param names_list:
     :return None:
     """
 
     for i, texture in enumerate(textures):
-        name, extension = os.listdir(old_dir)[i].split('.')
+
+        name, extension = names_list[i].split('.')
         cv2.imwrite(
-            f'{path_to_save}/{name}_downsampled_by_{factor}X.{extension}',
+            f'{path_to_save}/{name}_down_sampled_by_{factor}X.{extension}',
             texture
         )
 
@@ -119,30 +130,30 @@ def main():
     print('Python script to downsample textures from a directory or folder.')
     print('Type -1 to exit anytime.')
 
-    dir_name = get_directory()
+    dir_name = _get_directory()
     if dir_name == -1:
         exit()
 
-    factor = get_downsample_factor()
+    factor = _get_downsample_factor()
     if factor == -1:
         exit()
 
-    new_dir_path = make_new_dir(dir_name, factor)
+    new_dir_path = _make_new_dir(dir_name, factor)
     if new_dir_path is False:
         print('This textures has already been downsampled to this factor')
         exit()
 
+    path_list, names_list = _get_list_of_texture_paths(dir_name)
 
-    path_list = get_list_of_texture_paths(dir_name)
-
-    textures = load_textures(path_list)
+    textures = _load_textures(path_list)
 
     if textures == -1:
         print('No textures found in path')
         os.rmdir(new_dir_path)
         exit()
 
-    textures = downsample_textures(textures, factor)
-    save_new_downsampled_textures(textures, factor, dir_name, new_dir_path)
+    textures = _downsample_textures(textures, factor)
+    _save_new_down_sampled_textures(textures, factor, new_dir_path, names_list)
+
 
 main()
